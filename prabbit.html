@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클래시 로얄 합체 전술 성향 테스트</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #265DA6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px;
+            padding-top: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
+            padding: 30px 25px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        h1 {
+            color: #F2C166;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 700;
+            position: relative;
+            z-index: 10;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+            font-weight: 300;
+            line-height: 1.5;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .question-container {
+            display: none;
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        @keyframes slideInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        .question {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-weight: 600;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 3px solid transparent;
+            border-radius: 18px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            font-weight: 500;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            font-size: 0.95em;
+            line-height: 1.4;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: #F2C166;
+            background: rgba(242, 193, 102, 0.1);
+        }
+        
+        .option.selected {
+            background: #F2994B;
+            color: white;
+            border-color: #592202;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(242, 153, 75, 0.3);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .progress {
+            height: 100%;
+            background: #F2C166;
+            transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .progress-text {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .btn {
+            background: #F2994B;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 10px;
+            box-shadow: 0 8px 20px rgba(242, 153, 75, 0.3);
+            position: relative;
+            z-index: 10;
+            width: 80%;
+            max-width: 250px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(242, 153, 75, 0.4);
+            background: #F2C166;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            background: #592202;
+        }
+        
+        .start-screen {
+            display: block;
+        }
+        
+        .start-hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .start-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes warningShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .start-divider {
+            width: 60px;
+            height: 4px;
+            background: #F2C166;
+            border-radius: 2px;
+            margin: 20px auto;
+        }
+        
+        .start-action {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .start-btn {
+            background: #F2994B;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(242, 153, 75, 0.4);
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 15px;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(242, 153, 75, 0.5);
+            background: #F2C166;
+        }
+        
+        .btn-arrow {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+        
+        .start-btn:hover .btn-arrow {
+            transform: translateX(5px);
+        }
+        
+        .start-time {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .player-input {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .input-label {
+            display: block;
+            color: #F2C166;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .player-tag-input {
+            width: 90%;
+            max-width: 280px;
+            padding: 15px 20px;
+            border: 3px solid #F2C166;
+            border-radius: 25px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            background: white;
+            color: #0D0D0D;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(242, 193, 102, 0.2);
+        }
+        
+        .player-tag-input:focus {
+            outline: none;
+            border-color: #F2994B;
+            box-shadow: 0 8px 25px rgba(242, 153, 75, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .player-tag-input::placeholder {
+            color: #7f8c8d;
+            opacity: 0.7;
+        }
+        
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+        
+        .result-title {
+            font-size: 2em;
+            color: #F2C166;
+            margin-bottom: 25px;
+            font-weight: 700;
+            position: relative;
+            z-index: 10;
+            line-height: 1.2;
+        }
+        
+        .trait-card {
+            background: #592202;
+            color: white;
+            padding: 30px 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 10;
+            border: 2px solid #F2994B;
+        }
+        
+        .trait-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 10;
+            line-height: 1.2;
+        }
+        
+        .trait-description {
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 300;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .recommended-units {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            color: #333;
+            padding: 25px 20px;
+            border-radius: 18px;
+            margin: 25px 0;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .units-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #265DA6;
+        }
+        
+        .unit-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .unit-item {
+            background: #F2994B;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(242, 153, 75, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+        
+        .unit-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(242, 153, 75, 0.4);
+            background: #F2C166;
+        }
+        
+        .unit-item.active {
+            background: #265DA6;
+            box-shadow: 0 8px 25px rgba(38, 93, 166, 0.4);
+        }
+        
+        .unit-description {
+            margin-top: 15px;
+            padding: 15px 20px;
+            background: rgba(13, 13, 13, 0.95);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.9em;
+            line-height: 1.5;
+            border: 2px solid #F2994B;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            display: none;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        .unit-description.show {
+            display: block;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .unit-description::before {
+            content: '💡 ';
+            color: #F2C166;
+            font-weight: bold;
+        }
+        
+        /* 🎮 게임 스타일 리더보드 - 컴팩트 버전 */
+        .ranking-section {
+            background: linear-gradient(145deg, #3d3d6b, #2a2a5a);
+            color: white;
+            padding: 20px 15px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 10;
+            border: 4px solid #ffd700;
+        }
+        
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .crown-icon {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            animation: crownBounce 2s infinite ease-in-out;
+        }
+        
+        @keyframes crownBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .leaderboard-title {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .leaderboard-subtitle {
+            font-size: 0.85em;
+            color: #b8b8e6;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .ranking-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .rank-card {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            border: 2px solid #e6c200;
+            transition: all 0.3s ease;
+            color: #2a2a5a;
+        }
+        
+        .rank-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+        }
+        
+        .rank-card.gold {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-color: #e6c200;
+        }
+        
+        .rank-card.silver {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            border-color: #a8a8a8;
+            color: #333;
+        }
+        
+        .rank-card.bronze {
+            background: linear-gradient(135deg, #cd7f32, #e6a85c);
+            border-color: #b86f28;
+            color: white;
+        }
+        
+        .rank-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .rank-badge {
+            width: 30px;
+            height: 30px;
+            background: #2a2a5a;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            border: 2px solid white;
+        }
+        
+        .rank-card.gold .rank-badge {
+            background: linear-gradient(135deg, #ff6b35, #f9ca24);
+            border-color: #ffed4e;
+        }
+        
+        .rank-card.silver .rank-badge {
+            background: linear-gradient(135deg, #636e72, #74b9ff);
+            border-color: #e8e8e8;
+        }
+        
+        .rank-card.bronze .rank-badge {
+            background: linear-gradient(135deg, #8b4513, #cd853f);
+            border-color: #e6a85c;
+        }
+        
+        .trait-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .trait-name-rank {
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 2px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .trait-count {
+            font-size: 0.7em;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        .rank-stats {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        
+        .stat-number {
+            font-size: 1.2em;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .stat-percent {
+            font-size: 0.8em;
+            opacity: 0.8;
+            font-weight: 600;
+            background: rgba(0,0,0,0.1);
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+        
+        .rank-card.low-rank {
+            background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+            border-color: #bbb;
+            color: #666;
+            opacity: 0.8;
+            padding: 8px 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+        
+        .rank-card.low-rank:hover {
+            transform: translateY(-1px) scale(1.005);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+            opacity: 0.9;
+        }
+        
+        .rank-card.low-rank .rank-badge {
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(135deg, #888, #aaa);
+            border-color: #f5f5f5;
+            font-size: 0.8em;
+        }
+        
+        .rank-card.low-rank .trait-name-rank {
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .rank-card.low-rank .trait-count {
+            font-size: 0.65em;
+        }
+        
+        .rank-card.low-rank .stat-number {
+            font-size: 1em;
+            font-weight: 600;
+        }
+        
+        .rank-card.low-rank .stat-percent {
+            font-size: 0.7em;
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .share-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        
+        .share-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            width: 200px;
+            font-size: 0.9em;
+        }
+        
+        .share-btn.twitter {
+            background: #592202;
+            color: white;
+        }
+        
+        .share-btn.twitter:hover {
+            background: #F2994B;
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        .share-btn.facebook {
+            background: #265DA6;
+            color: white;
+        }
+        
+        .share-btn.facebook:hover {
+            background: #F2994B;
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        .share-btn.copy {
+            background: #F2C166;
+            color: #0D0D0D;
+            font-weight: 700;
+        }
+        
+        .share-btn.copy:hover {
+            background: #F2994B;
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+                margin: 5px;
+                border-radius: 20px;
+            }
+            
+            h1 {
+                font-size: 1.9em;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+            }
+            
+            .question {
+                font-size: 1.1em;
+                margin-bottom: 20px;
+            }
+            
+            .option {
+                padding: 16px 18px;
+                border-radius: 15px;
+                font-size: 0.9em;
+                min-height: 55px;
+            }
+            
+            .btn {
+                width: 90%;
+                padding: 12px 30px;
+                font-size: 0.95em;
+            }
+            
+            .trait-name {
+                font-size: 1.6em;
+            }
+            
+            .trait-description {
+                font-size: 0.95em;
+            }
+            
+            .result-title {
+                font-size: 1.8em;
+            }
+            
+            .share-btn {
+                width: 180px;
+                padding: 11px 20px;
+                font-size: 0.85em;
+            }
+            
+            .unit-item {
+                font-size: 0.8em;
+                padding: 8px 14px;
+            }
+            
+            .start-icon {
+                font-size: 3.5em;
+                margin-bottom: 15px;
+            }
+            
+            .start-btn {
+                padding: 16px 35px;
+                font-size: 1em;
+                max-width: 260px;
+            }
+            
+            .start-time {
+                font-size: 0.85em;
+            }
+            
+            .player-tag-input {
+                width: 95%;
+                max-width: 260px;
+                padding: 14px 18px;
+                font-size: 0.95em;
+            }
+            
+            .input-label {
+                font-size: 1em;
+                margin-bottom: 12px;
+            }
+            
+            .unit-description {
+                margin-top: 12px;
+                padding: 12px 16px;
+                font-size: 0.8em;
+            }
+            
+            /* 컴팩트 리더보드 모바일 최적화 */
+            .crown-icon {
+                font-size: 2.2em;
+                margin-bottom: 3px;
+            }
+            
+            .leaderboard-title {
+                font-size: 1.1em;
+            }
+            
+            .leaderboard-subtitle {
+                font-size: 0.75em;
+            }
+            
+            .ranking-section {
+                padding: 15px 12px;
+                margin: 15px 0;
+            }
+            
+            .leaderboard-header {
+                margin-bottom: 12px;
+            }
+            
+            .ranking-cards {
+                gap: 4px;
+            }
+            
+            .rank-card {
+                padding: 8px 12px;
+                border-radius: 8px;
+                border-width: 1px;
+            }
+            
+            .rank-badge {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8em;
+                border-width: 1px;
+            }
+            
+            .rank-info {
+                gap: 10px;
+            }
+            
+            .trait-name-rank {
+                font-size: 0.9em;
+                margin-bottom: 1px;
+            }
+            
+            .trait-count {
+                font-size: 0.65em;
+            }
+            
+            .stat-number {
+                font-size: 1em;
+            }
+            
+            .stat-percent {
+                font-size: 0.7em;
+                padding: 1px 4px;
+                border-radius: 6px;
+            }
+            
+            /* 4위 이하 모바일 스타일 */
+            .rank-card.low-rank {
+                padding: 6px 10px;
+                opacity: 0.7;
+            }
+            
+            .rank-card.low-rank .rank-badge {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7em;
+            }
+            
+            .rank-card.low-rank .trait-name-rank {
+                font-size: 0.8em;
+            }
+            
+            .rank-card.low-rank .trait-count {
+                font-size: 0.6em;
+            }
+            
+            .rank-card.low-rank .stat-number {
+                font-size: 0.9em;
+            }
+            
+            .rank-card.low-rank .stat-percent {
+                font-size: 0.65em;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.7em;
+            }
+            
+            .question {
+                font-size: 1em;
+            }
+            
+            .option {
+                padding: 14px 16px;
+                font-size: 0.85em;
+            }
+            
+            .start-icon {
+                font-size: 3em;
+            }
+            
+            .start-btn {
+                padding: 15px 30px;
+                font-size: 0.95em;
+                max-width: 240px;
+            }
+            
+            .player-tag-input {
+                width: 95%;
+                max-width: 240px;
+                padding: 12px 16px;
+                font-size: 0.9em;
+            }
+            
+            .input-label {
+                font-size: 0.95em;
+                margin-bottom: 10px;
+            }
+            
+            .unit-description {
+                margin-top: 10px;
+                padding: 10px 14px;
+                font-size: 0.75em;
+            }
+            
+            /* 초소형 모바일 리더보드 최적화 */
+            .crown-icon {
+                font-size: 2em;
+            }
+            
+            .leaderboard-title {
+                font-size: 1em;
+            }
+            
+            .leaderboard-subtitle {
+                font-size: 0.7em;
+            }
+            
+            .ranking-section {
+                padding: 12px 10px;
+            }
+            
+            .rank-card {
+                padding: 6px 10px;
+            }
+            
+            .rank-badge {
+                width: 22px;
+                height: 22px;
+                font-size: 0.75em;
+            }
+            
+            .rank-info {
+                gap: 8px;
+            }
+            
+            .trait-name-rank {
+                font-size: 0.85em;
+            }
+            
+            .trait-count {
+                font-size: 0.6em;
+            }
+            
+            .stat-number {
+                font-size: 0.9em;
+            }
+            
+            .stat-percent {
+                font-size: 0.65em;
+            }
+            
+            /* 4위 이하 초소형 모바일 스타일 */
+            .rank-card.low-rank {
+                padding: 5px 8px;
+                opacity: 0.65;
+            }
+            
+            .rank-card.low-rank .rank-badge {
+                width: 18px;
+                height: 18px;
+                font-size: 0.65em;
+            }
+            
+            .rank-card.low-rank .trait-name-rank {
+                font-size: 0.75em;
+            }
+            
+            .rank-card.low-rank .trait-count {
+                font-size: 0.55em;
+            }
+            
+            .rank-card.low-rank .stat-number {
+                font-size: 0.8em;
+            }
+            
+            .rank-card.low-rank .stat-percent {
+                font-size: 0.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 시작 화면 -->
+        <div id="start-screen" class="start-screen">
+            <div class="start-hero">
+                <div class="start-icon">⚔️</div>
+                <h1>클래시 로얄<br>합체 전술 성향 테스트</h1>
+                <div class="start-divider"></div>
+                <p class="subtitle">당신만의 전투 스타일을 발견하고<br>최적의 특성과 유닛을 찾아보세요!</p>
+            </div>
+            
+            <div class="player-input">
+                <label for="player-tag" class="input-label">플레이어 태그를 입력해 주세요!</label>
+                <input type="text" id="player-tag" class="player-tag-input" placeholder="예: #ABCD1234" maxlength="20">
+            </div>
+            
+            <div class="start-action">
+                <button class="btn start-btn" onclick="startTest()">
+                    <span class="btn-text">테스트 시작하기</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+                <div class="start-time">⏱️ 약 3분 소요</div>
+            </div>
+        </div>
+        
+        <!-- 질문 화면 -->
+        <div id="test-screen" style="display: none;">
+            <div class="progress-text">
+                <span id="current-question">1</span> / <span id="total-questions">18</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            
+            <div id="question-container"></div>
+            
+            <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>다음 문항</button>
+        </div>
+        
+        <!-- 결과 화면 -->
+        <div id="result-screen" class="result-screen">
+            <h2 class="result-title">🎉 테스트 완료!</h2>
+            
+            <div class="trait-card" id="main-trait">
+                <div class="trait-name" id="trait-name"></div>
+                <div class="trait-description" id="trait-description"></div>
+            </div>
+            
+            <div class="recommended-units">
+                <div class="units-title">📋 추천 유닛</div>
+                <div class="unit-list" id="unit-list"></div>
+            </div>
+            
+            <div class="ranking-section">
+                <div class="leaderboard-header">
+                    <div class="crown-icon">👑</div>
+                    <div class="leaderboard-title">특성 순위표</div>
+                    <div class="leaderboard-subtitle">전체 특성 인기 순위</div>
+                </div>
+                <div class="ranking-cards">
+                    <div class="rank-card gold">
+                        <div class="rank-info">
+                            <div class="rank-badge">1</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">🤝 클랜</div>
+                                <div class="trait-count">156명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">156</div>
+                            <div class="stat-percent">14%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card silver">
+                        <div class="rank-info">
+                            <div class="rank-badge">2</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">👹 고블린</div>
+                                <div class="trait-count">142명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">142</div>
+                            <div class="stat-percent">13%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card bronze">
+                        <div class="rank-info">
+                            <div class="rank-badge">3</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">⭐ 에이스</div>
+                                <div class="trait-count">139명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">139</div>
+                            <div class="stat-percent">13%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">4</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">⚔️ 어벤저</div>
+                                <div class="trait-count">123명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">123</div>
+                            <div class="stat-percent">11%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">5</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">💪 브롤러</div>
+                                <div class="trait-count">118명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">118</div>
+                            <div class="stat-percent">11%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">6</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">👑 노블레스</div>
+                                <div class="trait-count">115명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">115</div>
+                            <div class="stat-percent">10%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">7</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">🏹 원거리형</div>
+                                <div class="trait-count">112명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">112</div>
+                            <div class="stat-percent">10%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">8</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">🛡️ 탱커</div>
+                                <div class="trait-count">98명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">98</div>
+                            <div class="stat-percent">9%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">9</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">🗡️ 어쌔신</div>
+                                <div class="trait-count">87명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">87</div>
+                            <div class="stat-percent">8%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">10</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">🎯 투척수</div>
+                                <div class="trait-count">76명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">76</div>
+                            <div class="stat-percent">7%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-card low-rank">
+                        <div class="rank-info">
+                            <div class="rank-badge">11</div>
+                            <div class="trait-info">
+                                <div class="trait-name-rank">💀 언데드</div>
+                                <div class="trait-count">65명이 선택</div>
+                            </div>
+                        </div>
+                        <div class="rank-stats">
+                            <div class="stat-number">65</div>
+                            <div class="stat-percent">6%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="share-buttons">
+                <button class="share-btn twitter" onclick="shareTwitter()">X 공유</button>
+                <button class="share-btn facebook" onclick="shareFacebook()">페이스북 공유</button>
+                <button class="share-btn copy" onclick="copyResult()">결과 복사</button>
+            </div>
+            
+            <button class="btn" onclick="restartTest()" style="margin-top: 20px; background: #265DA6;">다시 테스트하기</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "전투에서 가장 중요하게 생각하는 것은?",
+                options: ["팀원들의 안전과 보호", "효율적인 자원 활용", "적의 약점 파악과 공략"]
+            },
+            {
+                question: "위기 상황에서 당신의 대응 방식은?",
+                options: ["신중하게 계획을 세운 후 행동", "직감을 믿고 빠르게 행동", "팀원들과 상의 후 결정"]
+            },
+            {
+                question: "좋아하는 게임 플레이 스타일은?",
+                options: ["압도적인 화력으로 밀어붙이기", "교묘한 전략으로 상대 혼란시키기", "꾸준한 성장으로 후반 뒤집기"]
+            },
+            {
+                question: "팀에서 당신의 역할은?",
+                options: ["모든 상황을 파악하는 리더", "위험을 감수하는 돌격대", "팀원들을 지원하는 서포터"]
+            },
+            {
+                question: "승부에서 가장 만족스러운 순간은?",
+                options: ["완벽한 전략이 성공했을 때", "극적인 역전승을 거뒀을 때", "팀원들과 함께 승리했을 때"]
+            },
+            {
+                question: "상대방과의 거리를 어떻게 유지하나요?",
+                options: ["가까이서 압박하며 싸운다", "적절한 거리를 유지한다", "최대한 멀리서 견제한다"]
+            },
+            {
+                question: "실패했을 때 당신의 반응은?",
+                options: ["원인을 분석하고 재도전", "더 강해져서 복수하겠다", "팀원들과 함께 극복한다"]
+            },
+            {
+                question: "새로운 전략을 배울 때 선호하는 방법은?",
+                options: ["기본기부터 차근차근", "실전에서 바로 적용", "다른 사람들과 함께 연습"]
+            },
+            {
+                question: "가장 자신 있는 상황은?",
+                options: ["1대1 개인전", "소수 정예 팀전", "대규모 단체전"]
+            },
+            {
+                question: "적과 마주쳤을 때 첫 번째 행동은?",
+                options: ["상대의 움직임을 관찰", "먼저 공격을 시도", "동료들의 지원 요청"]
+            },
+            {
+                question: "어려운 상대를 만났을 때?",
+                options: ["정면으로 맞서 싸운다", "약점을 찾아 공략한다", "동료들과 합동 작전을 세운다"]
+            },
+            {
+                question: "전투에서 가장 신경 쓰는 부분은?",
+                options: ["생존과 지속력", "정확성과 효율성", "타이밍과 순간 판단"]
+            },
+            {
+                question: "선호하는 게임 템포는?",
+                options: ["빠르고 박진감 넘치는", "차분하고 전략적인", "상황에 따라 유연한"]
+            },
+            {
+                question: "팀원이 위험에 처했을 때?",
+                options: ["즉시 구하러 간다", "상황을 판단하고 행동", "다른 팀원과 함께 구조"]
+            },
+            {
+                question: "가장 스트레스받는 상황은?",
+                options: ["혼자서 모든 걸 해결해야 할 때", "예상치 못한 변수가 생겼을 때", "팀워크가 안 맞을 때"]
+            },
+            {
+                question: "승리 후 가장 먼저 하고 싶은 것은?",
+                options: ["다음 전투 준비하기", "전투 과정 복기하기", "팀원들과 축하하기"]
+            },
+            {
+                question: "당신이 추구하는 성장 방향은?",
+                options: ["개인 실력 극대화", "전략적 사고력 향상", "팀워크 능력 발전"]
+            },
+            {
+                question: "마지막 질문! 당신의 모토는?",
+                options: ["끝까지 포기하지 않는다", "완벽한 계획이 승리를 만든다", "함께라면 무엇이든 할 수 있다"]
+            }
+        ];
+
+        const traits = {
+            "에이스": {
+                name: "에이스 🌟",
+                description: "당신은 타고난 리더입니다! 팀을 이끌고 전장을 지배하는 능력이 뛰어나며, 위기 상황에서 더욱 빛을 발합니다. 캡틴으로서 팀원들에게 강력한 버프를 제공하고, 적을 처치할 때마다 팀 전체의 공격 속도를 증가시킵니다.",
+                units: ["P.E.K.K.A", "도끼맨", "도둑", "고블린 머신"]
+            },
+            "어쌔신": {
+                name: "어쌔신 🗡️",
+                description: "당신은 그림자 속의 암살자입니다! 빠른 기동력과 치명적인 공격으로 적의 후방을 교란시키는 전문가입니다. 전투 시작과 함께 적진 깊숙이 침투하여 결정적인 피해를 가하며, 높은 치명타 확률로 상대를 압도합니다.",
+                units: ["고블린", "골드 나이트"]
+            },
+            "어벤저": {
+                name: "어벤저 ⚔️",
+                description: "당신은 복수의 화신입니다! 동료를 잃을수록 더욱 강해지며, 마지막까지 살아남아 적에게 응징을 가합니다. 특히 여성 유닛으로서 마지막에 남았을 때는 두 배의 피해량으로 전장을 뒤엎을 수 있습니다.",
+                units: ["발키리", "도둑"]
+            },
+            "브롤러": {
+                name: "브롤러 💪",
+                description: "당신은 거친 전장의 투사입니다! 강인한 체력과 끈질긴 생명력으로 전선을 유지하며, 적의 공격을 정면으로 받아내는 탱킹의 달인입니다. 팀 전체의 생존력을 크게 향상시킵니다.",
+                units: ["바바리안", "프린스", "자이언트 해골"]
+            },
+            "클랜": {
+                name: "클랜 🤝",
+                description: "당신은 진정한 팀 플레이어입니다! 동료들과의 유대가 강하며, 위기 상황에서 놀라운 회복력을 보여줍니다. HP가 절반 이하로 떨어지면 빠른 회복과 함께 공격 속도가 증가하여 역전의 발판을 마련합니다.",
+                units: ["아처", "바바리안", "발키리"]
+            },
+            "고블린": {
+                name: "고블린 👹",
+                description: "당신은 영리한 자원 관리자입니다! 효율성을 추구하며, 작은 투자로 큰 효과를 얻는 능력이 뛰어납니다. 매 라운드마다 추가 고블린을 무료로 획득하여 숫적 우위를 점할 수 있습니다.",
+                units: ["고블린", "창 고블린", "다트 고블린", "고블린 머신"]
+            },
+            "탱커": {
+                name: "탱커 🛡️",
+                description: "당신은 팀의 든든한 방패입니다! 동료들을 보호하는 것을 최우선으로 하며, 강력한 보호막으로 팀 전체의 생존력을 책임집니다. 전투 시작 시 뒤에 있는 유닛들에게 보호막을 제공합니다.",
+                units: ["기사", "P.E.K.K.A", "고블린 머신", "해골 킹"]
+            },
+            "노블레스": {
+                name: "노블레스 👑",
+                description: "당신은 전략적 배치의 대가입니다! 포지션에 따른 역할 분담을 완벽하게 이해하며, 전방의 탱커와 후방의 딜러를 효율적으로 운용합니다. 위치에 따라 피해 감소 또는 피해량 증가 효과를 얻습니다.",
+                units: ["기사", "프린스", "프린세스", "골드 나이트"]
+            },
+            "원거리형": {
+                name: "원거리형 🏹",
+                description: "당신은 정밀한 저격수입니다! 안전한 거리에서 꾸준한 화력을 제공하며, 공격할 때마다 점점 더 빨라지는 연사력으로 적을 압도합니다. 지속적인 교전에서 진가를 발휘합니다.",
+                units: ["아처", "다트 고블린", "프린세스"]
+            },
+            "투척수": {
+                name: "투척수 🎯",
+                description: "당신은 사거리의 마스터입니다! 멀리 있는 적일수록 더 큰 피해를 가하며, 확장된 공격 범위로 전장을 장악합니다. 거리 기반 전술의 전문가로서 적이 가까이 오기 전에 제압합니다.",
+                units: ["창 고블린", "폭탄병", "도끼맨"]
+            },
+            "언데드": {
+                name: "언데드 💀",
+                description: "당신은 어둠의 지배자입니다! 적에게 저주를 걸어 약화시키고, 저주받은 적을 처치할 때마다 더욱 강해집니다. 전투 시작과 함께 가장 강한 적을 표적으로 삼아 최대 HP를 감소시킵니다.",
+                units: ["폭탄병", "자이언트 해골", "해골 킹"]
+            }
+        };
+
+        const unitDescriptions = {
+            "기사": "왕국에서 가장 강력한 근접 전사 중 하나입니다.",
+            "아처": "엄청난 사거리와 톡톡 튀는 핫핑크색 머리카락의 소유자입니다. 갑옷은 필요 없어요!",
+            "고블린": "뛰어난 속도와 근접 공격 기술 덕분에 성가신 갑옷을 입을 필요가 없습니다.",
+            "창 고블린": "갑옷 따위는 필요 없을 만큼 먼 거리에서 바람을 가르는 창을 날립니다.",
+            "폭탄병": "가장 가까운 적에게 폭탄을 던져 2칸 반경 내에 피해를 줍니다.",
+            "바바리안": "멋진 콧수염을 가진 전방위 근접 공격 유닛입니다.",
+            "발키리": "분노의 힘으로 광역 피해를 입히는 근접 공격의 달인입니다.",
+            "P.E.K.K.A": "느리지만 견고한 갑옷을 두른 근접 전사입니다. 그 무엇도 그녀를 뚫고 지나갈 수 없을 거예요…",
+            "프린스": "전투가 시작하면 가장 가까운 대상에게 돌진하여 두 배의 피해를 입히고 적을 밀어내며 2초 동안 기절시킵니다.",
+            "자이언트 해골": "처치 시 1.5초 후 폭발하는 폭탄을 떨어뜨려 2초 동안 육각형 반경 내의 적에게 피해를 입히고 기절시킵니다.",
+            "다트 고블린": "무장하지 않은 채 껌을 씹으며 빠르게 달리고, 멀리까지 다트를 쏘는 원거리 공격수입니다.",
+            "도끼맨": "여러 칸에 걸쳐 가장 가까운 대상에게 부메랑 도끼를 던집니다.",
+            "프린세스": "가장 먼 적에게 불화살을 발사하여 2칸 반경 내에 피해를 입힙니다.",
+            "도둑": "특정 공격 후 3간 중 가장 멀리 있는 적에게 돌진하여 추가 피해를 주고, 경로에 있는 모든 적을 1초 동안 기절시킵니다.",
+            "고블린 머신": "특정 타격 후 가장 먼 거리에 있는 적에게 로켓을 발사하여 50%의 보너스 피해를 주고 명중한 적을 1.5초 동안 기절시킵니다.",
+            "해골 킹": "원뿔 반경 내의 적에게 피해를 입히고, 물리친 적 하나당 해골 하나를 소환합니다.",
+            "골드 나이트": "적을 처치한 후, HP가 가장 낮은 적에게 돌진하여 추가 피해를 줍니다."
+        };
+
+        let currentQuestion = 0;
+        let answers = [];
+        let scores = {};
+        let playerTag = "";
+        let selectedUnitIndex = -1;
+
+        // 점수 초기화
+        Object.keys(traits).forEach(trait => {
+            scores[trait] = 0;
+        });
+
+        // Enter 키로 테스트 시작 기능 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            const playerTagInput = document.getElementById('player-tag');
+            if (playerTagInput) {
+                playerTagInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        startTest();
+                    }
+                });
+            }
+        });
+
+        function calculateScore(questionIndex, optionIndex) {
+            // 🎯 균형 조정된 질문별 특성 매핑 (각 특성이 5-8번 정도 나오도록 조정)
+            const questionMapping = [
+                [["탱커", "브롤러"], ["에이스", "고블린"], ["어쌔신", "언데드"]], // 질문 0
+                [["노블레스", "원거리형"], ["어벤저"], ["클랜", "투척수"]], // 질문 1
+                [["브롤러"], ["어쌔신", "투척수"], ["원거리형", "고블린"]], // 질문 2
+                [["에이스"], ["어벤저"], ["탱커", "클랜"]], // 질문 3
+                [["노블레스"], ["어벤저", "언데드"], ["고블린"]], // 질문 4
+                [["브롤러"], ["탱커", "에이스"], ["원거리형", "투척수"]], // 질문 5
+                [["노블레스"], ["어벤저", "언데드"], ["클랜"]], // 질문 6
+                [["브롤러"], ["어쌔신", "에이스"], ["클랜"]], // 질문 7
+                [["어쌔신"], ["에이스", "고블린"], ["탱커"]], // 질문 8
+                [["원거리형", "투척수"], ["어쌔신"], ["노블레스"]], // 질문 9
+                [["브롤러", "탱커"], ["언데드"], ["클랜", "노블레스"]], // 질문 10
+                [["브롤러"], ["원거리형", "투척수"], ["고블린"]], // 질문 11
+                [["고블린"], ["노블레스", "원거리형"], ["에이스", "어벤저"]], // 질문 12
+                [["탱커"], ["고블린"], ["클랜", "에이스"]], // 질문 13
+                [["어벤저"], ["언데드"], ["클랜", "고블린"]], // 질문 14
+                [["에이스"], ["투척수"], ["클랜", "원거리형"]], // 질문 15
+                [["에이스", "어쌔신"], ["원거리형"], ["클랜"]], // 질문 16
+                [["어벤저", "언데드"], ["노블레스"], ["고블린"]] // 질문 17
+            ];
+
+            if (questionMapping[questionIndex] && questionMapping[questionIndex][optionIndex]) {
+                questionMapping[questionIndex][optionIndex].forEach(trait => {
+                    scores[trait] += 1;
+                });
+            }
+        }
+
+        function startTest() {
+            // 플레이어 태그 입력 검증
+            const tagInput = document.getElementById('player-tag');
+            const inputValue = tagInput.value.trim();
+            
+            if (!inputValue) {
+                // 입력값이 비어있을 때
+                tagInput.style.borderColor = '#e74c3c';
+                tagInput.style.boxShadow = '0 8px 25px rgba(231, 76, 60, 0.3)';
+                tagInput.focus();
+                
+                // 경고 메시지 표시
+                showWarningMessage('플레이어 태그를 입력해 주세요! 💫');
+                
+                // 2초 후 스타일 복원
+                setTimeout(() => {
+                    tagInput.style.borderColor = '#F2C166';
+                    tagInput.style.boxShadow = '0 5px 15px rgba(242, 193, 102, 0.2)';
+                }, 2000);
+                
+                return; // 테스트 시작하지 않음
+            }
+            
+            // 플레이어 태그 저장
+            playerTag = inputValue;
+            
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('test-screen').style.display = 'block';
+            // 시작할 때 다음 버튼 비활성화
+            document.getElementById('next-btn').disabled = true;
+            showQuestion();
+        }
+        
+        function showWarningMessage(message) {
+            // 기존 경고 메시지가 있다면 제거
+            const existingWarning = document.querySelector('.warning-message');
+            if (existingWarning) {
+                existingWarning.remove();
+            }
+            
+            // 새 경고 메시지 생성
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'warning-message';
+            warningDiv.textContent = message;
+            warningDiv.style.cssText = `
+                background: linear-gradient(145deg, #e74c3c, #c0392b);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 15px;
+                margin: 15px 0;
+                font-size: 0.9em;
+                font-weight: 600;
+                text-align: center;
+                box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+                animation: warningShake 0.5s ease-in-out;
+                border: 2px solid #a93226;
+            `;
+            
+            // 플레이어 입력 필드 아래에 삽입
+            const playerInput = document.querySelector('.player-input');
+            playerInput.appendChild(warningDiv);
+            
+            // 3초 후 자동 제거
+            setTimeout(() => {
+                if (warningDiv && warningDiv.parentNode) {
+                    warningDiv.remove();
+                }
+            }, 3000);
+        }
+
+        function showQuestion() {
+            const container = document.getElementById('question-container');
+            const question = questions[currentQuestion];
+            
+            container.innerHTML = `
+                <div class="question-container active">
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => 
+                            `<div class="option" onclick="selectOption(${index})">${option}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // 다음 버튼을 비활성화
+            document.getElementById('next-btn').disabled = true;
+            
+            updateProgress();
+        }
+
+        function selectOption(optionIndex) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            answers[currentQuestion] = optionIndex;
+            document.getElementById('next-btn').disabled = false;
+            
+            // 점수 계산 로직 (각 질문별로 특성 점수 부여)
+            calculateScore(currentQuestion, optionIndex);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion >= questions.length) {
+                showResult();
+            } else {
+                showQuestion();
+                // 다음 문항으로 넘어갈 때 버튼 비활성화
+                document.getElementById('next-btn').disabled = true;
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('total-questions').textContent = questions.length;
+        }
+
+        function showResult() {
+            // 최고 점수 특성 찾기
+            let maxScore = 0;
+            let resultTrait = "";
+            
+            Object.keys(scores).forEach(trait => {
+                if (scores[trait] > maxScore) {
+                    maxScore = scores[trait];
+                    resultTrait = trait;
+                }
+            });
+
+            // 동점일 경우 랜덤 선택
+            const maxTraits = Object.keys(scores).filter(trait => scores[trait] === maxScore);
+            if (maxTraits.length > 1) {
+                resultTrait = maxTraits[Math.floor(Math.random() * maxTraits.length)];
+            }
+
+            const trait = traits[resultTrait];
+            
+            document.getElementById('test-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            
+            document.getElementById('trait-name').textContent = trait.name;
+            document.getElementById('trait-description').textContent = trait.description;
+            
+            const unitList = document.getElementById('unit-list');
+            unitList.innerHTML = trait.units.map((unit, index) => 
+                `<span class="unit-item" onclick="toggleUnitDescription(${index})">
+                    ${unit}
+                </span>
+                <div class="unit-description" id="unit-desc-${index}">
+                    ${unitDescriptions[unit] || '설명이 없습니다.'}
+                </div>`
+            ).join('');
+            
+            // 유닛 선택 초기화
+            selectedUnitIndex = -1;
+        }
+
+        function toggleUnitDescription(index) {
+            const unitItems = document.querySelectorAll('.unit-item');
+            const descriptions = document.querySelectorAll('.unit-description');
+            const currentItem = unitItems[index];
+            const currentDescription = document.getElementById(`unit-desc-${index}`);
+            
+            // 이미 선택된 유닛을 다시 클릭하면 닫기
+            if (selectedUnitIndex === index) {
+                currentItem.classList.remove('active');
+                currentDescription.classList.remove('show');
+                selectedUnitIndex = -1;
+                return;
+            }
+            
+            // 모든 유닛 비활성화
+            unitItems.forEach(item => item.classList.remove('active'));
+            descriptions.forEach(desc => desc.classList.remove('show'));
+            
+            // 현재 유닛 활성화
+            currentItem.classList.add('active');
+            currentDescription.classList.add('show');
+            selectedUnitIndex = index;
+        }
+
+        function shareTwitter() {
+            const traitName = document.getElementById('trait-name').textContent;
+            const text = `🎉 ${playerTag} 님의 클래시 로얄 합체 전술 성향 테스트 결과 🎉\n\n${traitName}\n\n나도 테스트 해보고 싶다면? 👉`;
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
+        }
+
+        function shareFacebook() {
+            const url = window.location.href;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+        }
+
+        function copyResult() {
+            const traitName = document.getElementById('trait-name').textContent;
+            const description = document.getElementById('trait-description').textContent;
+            
+            // 현재 특성의 추천 유닛을 깔끔하게 가져오기
+            let currentTraitKey = "";
+            Object.keys(traits).forEach(trait => {
+                if (traits[trait].name === traitName) {
+                    currentTraitKey = trait;
+                }
+            });
+            const units = currentTraitKey ? traits[currentTraitKey].units.join(' • ') : '';
+            const url = window.location.href;
+            
+            const result = `🎉 ${playerTag} 님의 클래시 로얄 합체 전술 성향 테스트 결과 🎉\n\n${traitName}\n\n${description}\n\n📋 추천 유닛: ${units}\n\n나도 테스트 해보고 싶다면? 👉 ${url}`;
+            
+            navigator.clipboard.writeText(result).then(() => {
+                alert('결과가 클립보드에 복사되었습니다!');
+            });
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            answers = [];
+            playerTag = "";
+            selectedUnitIndex = -1;
+            Object.keys(traits).forEach(trait => {
+                scores[trait] = 0;
+            });
+            
+            // 입력 필드 초기화
+            document.getElementById('player-tag').value = '';
+            
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
